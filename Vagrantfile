@@ -1,13 +1,26 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+USE_KEY = nil
+
+# TODO: Uncomment this if you wish to use a c9 paid ssh key
+# $SETUP_PERSONAL_C9_PAID = <<SCRIPT
+# read -p "Do you wish to install this program?" C9_KEY
+# echo $C9_KEY >> ~/.ssh/authorized_keys
+# SCRIPT
+# USE_KEY = True
 
 Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty64"
   config.vm.network "private_network", ip: "10.0.0.222"
   config.vm.provision "shell", privileged: false, inline: $INSTALL_NODEJS
-  config.vm.provision "shell", privileged: false, inline: $INSTALL_CLOUD9_IDE
-  config.vm.provision "shell", privileged: false, run: "always", inline: $START_CLOUD9_IDE
+  config.vm.provision "shell", privileged: false, inline: $INSTALL_NO_IP
+  if USE_KEY
+    config.vm.provision "shell", privileged: false, inline: $INSTALL_CLOUD9_IDE
+    config.vm.provision "shell", privileged: false, run: "always", inline: $START_CLOUD9_IDE
+  else
+    config.vm.provision "shell", privileged: false, inline: $SETUP_PERSONAL_C9_PAID
+  end
 
 end
 
